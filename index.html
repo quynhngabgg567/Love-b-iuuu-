@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday My Love 💖</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #ff9a9e, #fad0c4);
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .heart {
+      width: 200px;
+      height: 200px;
+      background: red;
+      position: relative;
+      transform: rotate(-45deg);
+      animation: beat 1s infinite;
+      box-shadow: 0 0 60px rgba(255,0,0,0.6);
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      width: 200px;
+      height: 200px;
+      background: red;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .heart::before {
+      top: -100px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: 100px;
+      top: 0;
+    }
+
+    @keyframes beat {
+      0%, 100% {
+        transform: rotate(-45deg) scale(1);
+      }
+      50% {
+        transform: rotate(-45deg) scale(1.2);
+      }
+    }
+
+    .message {
+      position: absolute;
+      text-align: center;
+      color: white;
+      font-size: 24px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      animation: fadeIn 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0.5; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="heart"></div>
+  <div class="message">
+    Tuấn ♥️ Nga <br>
+    Anh yêu em 💞 <br>
+    Chúc bé iuuu sinh nhật vui vẻ nha 😘😘
+  </div>
+</body>
+  </html>
