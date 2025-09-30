@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Happy Birthday My Love 💖</title>
+  <title>Love U ❤️</title>
   <style>
     body {
       margin: 0;
@@ -12,69 +12,77 @@
       align-items: center;
       background: radial-gradient(circle at center, #ff9a9e, #fad0c4);
       overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .heart {
+    .scene {
       width: 200px;
       height: 200px;
-      background: red;
+      perspective: 800px;
+    }
+
+    .heart3d {
+      width: 100%;
+      height: 100%;
       position: relative;
-      transform: rotate(-45deg);
-      animation: beat 1s infinite;
-      box-shadow: 0 0 60px rgba(255,0,0,0.6);
+      transform-style: preserve-3d;
+      animation: spin 6s infinite linear;
     }
 
-    .heart::before,
-    .heart::after {
-      content: "";
-      width: 200px;
-      height: 200px;
-      background: red;
-      border-radius: 50%;
+    .heart3d div {
       position: absolute;
-    }
-
-    .heart::before {
-      top: -100px;
-      left: 0;
-    }
-
-    .heart::after {
-      left: 100px;
       top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: red;
+      clip-path: path("M 100 30 A 35 35 0 0 1 165 30 Q 165 90 100 150 Q 35 90 35 30 A 35 35 0 0 1 100 30 Z");
+      transform: rotateY(var(--i)) translateZ(20px);
+      opacity: 0.9;
     }
 
-    @keyframes beat {
-      0%, 100% {
-        transform: rotate(-45deg) scale(1);
-      }
-      50% {
-        transform: rotate(-45deg) scale(1.2);
-      }
+    @keyframes spin {
+      from { transform: rotateY(0deg) rotateX(10deg); }
+      to { transform: rotateY(360deg) rotateX(10deg); }
     }
 
     .message {
       position: absolute;
+      bottom: 10%;
+      width: 100%;
       text-align: center;
+      font-size: 22px;
       color: white;
-      font-size: 24px;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-      animation: fadeIn 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0.5; }
-      to { opacity: 1; }
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
-  <div class="heart"></div>
-  <div class="message">
-    Tuấn ♥️ Nga <br>
-    Anh yêu em 💞 <br>
-    Chúc bé iuuu sinh nhật vui vẻ nha 😘😘
+  <div class="scene">
+    <div class="heart3d">
+      <!-- Tạo nhiều lớp để nhìn 3D -->
+      <div style="--i:0deg"></div>
+      <div style="--i:30deg"></div>
+      <div style="--i:60deg"></div>
+      <div style="--i:90deg"></div>
+      <div style="--i:120deg"></div>
+      <div style="--i:150deg"></div>
+      <div style="--i:180deg"></div>
+      <div style="--i:210deg"></div>
+      <div style="--i:240deg"></div>
+      <div style="--i:270deg"></div>
+      <div style="--i:300deg"></div>
+      <div style="--i:330deg"></div>
+    </div>
   </div>
+  <div class="message">
+    Tuấn ❤️ Nga <br>
+    Anh yêu em 💕 <br>
+    Chúc bé iuuu sinh nhật vui vẻ nha 😘😘                               
+  Hôm nay là một ngày thật đặc biệt... <br>
+  Bé iuuu của anh thêm tuổi mới rồi, bớt bướng 1 xíu nha 😆 <br>
+  Sau này dù như nào đi nữa, anh vẫn mong em luôn bình yên và hạnh phúc🫂💗 🌸 <br>
+  Chúc em sẽ thật mạnh mẽ trên con đường phía trước 💕 <br>
+   </div> 
 </body>
-  </html>
+</html>
