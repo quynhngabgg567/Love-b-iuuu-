@@ -4,115 +4,109 @@
   <meta charset="UTF-8">
   <title>Happy Birthday ❤️</title>
   <style>
-    body { margin: 0; overflow: hidden; background: #000; }
-    canvas { display: block; }
-    .circle-text {
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
       position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 400px;
-      height: 400px;
-      border-radius: 50%;
-      animation: spinCircle 20s linear infinite;
+      top: 0;
+      left: 0;
     }
-    .circle-text span {
+    .text-container {
       position: absolute;
-      left: 50%;
-      top: 50%;
-      transform-origin: 0 -180px;
-      font-size: 18px;
-      color: #ff66cc;
-      text-shadow: 0 0 10px #ff99cc;
-      white-space: pre;
+      bottom: 80px;
+      width: 100%;
+      text-align: center;
+      perspective: 1000px;
+      overflow: hidden;
     }
-    @keyframes spinCircle {
-      from { transform: translateX(-50%) rotate(0deg); }
-      to { transform: translateX(-50%) rotate(360deg); }
+    .rotating-text {
+      display: inline-block;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff99cc;
+      animation: rotateText 15s linear infinite;
+      white-space: nowrap;
     }
-    #music-btn {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid #fff;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
+    @keyframes rotateText {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
     }
-    #music-btn:hover { background: rgba(255,255,255,0.3); }
   </style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
+  <!-- Trái tim 3D nổ tung -->
+  <canvas id="heartCanvas"></canvas>
 
-  <div class="circle-text" id="circleText"></div>
+  <!-- Chữ xoay vòng bên dưới -->
+  <div class="text-container">
+    <div class="rotating-text">
+      Tuấn ❤️ Nga • Anh yêu em 💕 • Bé iu của anh thêm tuổi mới rồi 😘 • 
+      Chúc em luôn xinh đẹp, vui vẻ và hạnh phúc 💖 • 
+      Chúc em bé của anh sẽ thật mạnh mẽ trên con đường phía trước 💪🌸 •
+      Sau này, em vẫn luôn là một phần đặc biệt trong tim anh 💞💞 •
+    </div>
+  </div>
 
-  <audio id="bg-music" loop autoplay>
-    <source src="https://example.com/yeu-em-rat-nhieu.mp3" type="audio/mpeg">
-    <!-- Bạn cần đổi link trên thành link mp3 thật của bài Yêu Em Rất Nhiều -->
+  <!-- Nhạc tự chạy -->
+  <audio autoplay loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
   </audio>
-  <button id="music-btn">🎵 Bật nhạc</button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({canvas: document.getElementById("bg"), alpha:true});
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const canvas = document.getElementById("heartCanvas");
+    const ctx = canvas.getContext("2d");
+    let w, h;
 
-    const particleCount = 1200;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    // Tạo hạt hình trái tim
     const particles = [];
-    function heartFunction(t) {
-      const x = 16 * Math.pow(Math.sin(t), 3);
-      const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
-      return new THREE.Vector3(x * 0.12, y * 0.12, 0);
-    }
-    for (let i = 0; i < particleCount; i++) {
-      const t = Math.random() * Math.PI * 2;
-      const v = heartFunction(t);
-      positions[i*3] = v.x + (Math.random() - 0.5) * 0.6;
-      positions[i*3+1] = v.y + (Math.random() - 0.5) * 0.6;
-      positions[i*3+2] = (Math.random() - 0.5) * 0.6;
-      particles.push({vx: positions[i*3], vy: positions[i*3+1], vz: positions[i*3+2]});
-    }
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const material = new THREE.PointsMaterial({color: 0xff0066, size: 0.15});
-    const pointCloud = new THREE.Points(geometry, material);
-    scene.add(pointCloud);
-
-    camera.position.z = 18;
-
-    let clock = new THREE.Clock();
-    function animate() {
-      requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
-      const pos = pointCloud.geometry.attributes.position.array;
-      for (let i = 0; i < particleCount; i++) {
-        const s = Math.sin((t % 5) / 5 * Math.PI);
-        pos[i*3] = particles[i].vx * (1 + s*2);
-        pos[i*3+1] = particles[i].vy * (1 + s*2);
-        pos[i*3+2] = particles[i].vz * (1 + s*2);
+    function createHeart() {
+      particles.length = 0;
+      for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
+        const x = 16 * Math.pow(Math.sin(angle), 3);
+        const y = 13 * Math.cos(angle) - 5 * Math.cos(2*angle) - 2 * Math.cos(3*angle) - Math.cos(4*angle);
+        for (let i = 0; i < 8; i++) {
+          particles.push({
+            x: w/2,
+            y: h/2,
+            dx: (x * 10 + (Math.random()-0.5)*20),
+            dy: (-y * 10 + (Math.random()-0.5)*20),
+            life: 0
+          });
+        }
       }
-      pointCloud.geometry.attributes.position.needsUpdate = true;
-      renderer.render(scene, camera);
+    }
+
+    createHeart();
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => {
+        p.x += p.dx * 0.02;
+        p.y += p.dy * 0.02;
+        p.life += 1;
+        ctx.fillStyle = "rgba(255,100,150," + (1 - p.life/100) + ")";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      if (particles[0].life > 100) {
+        createHeart(); // lặp lại hiệu ứng nổ
+      }
+      requestAnimationFrame(animate);
     }
     animate();
-
-    const circle = document.getElementById("circleText");
-    const message = `Tuấn ❤️ Nga  
-Anh yêu em 💕  
-Chúc bé iuuu sinh nhật thật vui vẻ 😘  
-Bé iuuu của anh thêm tuổi mới rồi, bớt bướng 1 xíu nha 😆💕  
-Chúc em luôn xinh đẹp, vui vẻ và hạnh phúc 💖  
-Cảm ơn em đã đến và làm thế giới của anh rực rỡ hơn ✨  
-Sau này dù như nào đi nữa, anh vẫn mong em luôn bình yên và hạnh phúc 💕  
-Chúc em bé của anh thật mạnh mẽ trên con đường phía trước 💪🌸🌺  
-Sau này, em vẫn luôn là một phần đặc biệt trong tim anh 💓💗 `;
-    const chars = message.split("");
-    for (let i = 0; i <
+  </script>
+</body>
+  </html>
