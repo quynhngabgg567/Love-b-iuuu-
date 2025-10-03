@@ -24,6 +24,22 @@
       from { transform: translate(-50%, -50%) rotate(0deg); }
       to { transform: translate(-50%, -50%) rotate(360deg); }
     }
+    #music-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid #fff;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #music-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
   </style>
 </head>
 <body>
@@ -37,11 +53,14 @@
   </div>
 
   <!-- Nhạc nền -->
-  <audio autoplay loop>
+  <audio id="bg-music" loop>
     <source src="https://cdn.pixabay.com/download/audio/2023/03/14/audio_3b5b7fba7c.mp3?filename=romantic-piano-melody-140990.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Thư viện Three.js -->
+  <!-- Nút bật/tắt nhạc -->
+  <button id="music-btn">🎵 Bật nhạc</button>
+
+  <!-- Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <script>
@@ -50,7 +69,7 @@
     const renderer = new THREE.WebGLRenderer({canvas: document.querySelector("#bg"), alpha:true});
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Tạo trái tim 3D
+    // Tạo hình trái tim
     const x = 0, y = 0;
     const heartShape = new THREE.Shape();
     heartShape.moveTo(x, y);
@@ -72,7 +91,7 @@
 
     camera.position.z = 12;
 
-    // Hiệu ứng nổ hạt
+    // Hạt
     const particles = [];
     const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
     const particleMaterial = new THREE.MeshBasicMaterial({color: 0xff4d4d});
@@ -99,20 +118,17 @@
       let t = (elapsed % cycleDuration) / cycleDuration;
 
       if (t < 0.3) {
-        // Hiển thị trái tim
         heart.visible = true;
         particles.forEach(p => p.visible = false);
         let scale = 1 + 0.2 * Math.sin(t * Math.PI * 3);
         heart.scale.set(scale, scale, scale);
       } else if (t < 0.6) {
-        // Nổ hạt
         heart.visible = false;
         particles.forEach(p => {
           p.visible = true;
           p.position.multiplyScalar(1.05);
         });
       } else {
-        // Gom lại thành tim
         heart.visible = true;
         particles.forEach(p => p.visible = false);
         heart.scale.set(1,1,1);
@@ -123,12 +139,35 @@
     }
     animate();
 
-    // Responsive
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    // Điều khiển nhạc
+    const music = document.getElementById("bg-music");
+    const btn = document.getElementById("music-btn");
+
+    btn.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        btn.textContent = "⏸️ Tắt nhạc";
+      } else {
+        music.pause();
+        btn.textContent = "🎵 Bật nhạc";
+      }
+    });
+
+    // Cố gắng autoplay
+    window.addEventListener("load", () => {
+      music.play().then(() => {
+        btn.textContent = "⏸️ Tắt nhạc";
+      }).catch(() => {
+        btn.textContent = "🎵 Bật nhạc";
+      });
+    });
   </script>
 </body>
 </html>
+``
