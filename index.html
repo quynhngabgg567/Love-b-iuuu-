@@ -4,39 +4,23 @@
   <meta charset="UTF-8">
   <title>Happy Birthday ❤️</title>
   <style>
-    body { margin: 0; overflow: hidden; background: radial-gradient(circle, #ffb6c1, #ff7f9d); }
+    body { margin: 0; overflow: hidden; background: #000; }
     canvas { display: block; }
-
-    /* Chữ ở giữa */
-    #message {
+    #text {
       position: absolute;
-      top: 55%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      width: 100%;
       text-align: center;
       font-family: Arial, sans-serif;
       font-size: 18px;
-      color: white;
-      text-shadow: 0 0 10px rgba(0,0,0,0.7);
-      line-height: 1.6;
-      width: 80%;
-    }
-
-    /* Chữ xoay vòng */
-    #circleText {
-      position: absolute;
-      top: 80%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: Arial, sans-serif;
-      font-size: 20px;
       color: #fff;
-      text-shadow: 0 0 8px rgba(0,0,0,0.6);
-      white-space: nowrap;
-      animation: spin 15s linear infinite;
+      text-shadow: 0 0 15px rgba(255,0,0,0.8);
+      line-height: 1.6;
+      animation: spinText 20s linear infinite;
     }
-
-    @keyframes spin {
+    @keyframes spinText {
       from { transform: translate(-50%, -50%) rotate(0deg); }
       to { transform: translate(-50%, -50%) rotate(360deg); }
     }
@@ -44,82 +28,97 @@
 </head>
 <body>
   <canvas id="bg"></canvas>
-
-  <div id="message">
+  <div id="text">
     <p>Tuấn ❤️ Nga</p>
-    <p>Bé iuuu của anh thêm tuổi mới rồi, bớt lườm một xíu nha 😆</p>
-    <p>Chúc em luôn xinh đẹp, vui vẻ và hạnh phúc 💕</p>
-    <p>Cảm ơn em đã đến và làm thế giới của anh rực rỡ hơn ✨</p>
+    <p>Bé iuuu của anh thêm tuổi mới rồi, bớt bướng 1 xíu nha 😆</p>
     <p>Sau này dù như nào đi nữa, anh vẫn mong em luôn bình yên và hạnh phúc 💖</p>
-    <p>Sau này, em vẫn luôn là một phần đặc biệt trong tim anh💓💗</p>
+    <p>Chúc em bé của anh thật mạnh mẽ trên con đường phía trước 💕🌸</p>
+    <p>Sau này, em vẫn luôn là một phần đặc biệt trong tim anh 💓💗</p>
   </div>
 
-  <div id="circleText">
-    Tuấn ❤️ Nga - Bé iuuu của anh 💞 - Yêu em nhiều 😘
-  </div>
+  <!-- Nhạc nền -->
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/14/audio_3b5b7fba7c.mp3?filename=romantic-piano-melody-140990.mp3" type="audio/mpeg">
+  </audio>
 
+  <!-- Thư viện Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <script>
-    // Scene setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("bg"), alpha: true });
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({canvas: document.querySelector("#bg"), alpha:true});
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Particles for heart
-    const particles = new THREE.Group();
-    const particleCount = 1000;
-    const geometry = new THREE.SphereGeometry(0.05, 8, 8);
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    // Tạo trái tim 3D
+    const x = 0, y = 0;
+    const heartShape = new THREE.Shape();
+    heartShape.moveTo(x, y);
+    heartShape.bezierCurveTo(x, y, x-2.5, y-2.5, x-2.5, y-5);
+    heartShape.bezierCurveTo(x-2.5, y-7.5, x, y-7.5, x, y-5);
+    heartShape.bezierCurveTo(x, y-7.5, x+2.5, y-7.5, x+2.5, y-5);
+    heartShape.bezierCurveTo(x+2.5, y-2.5, x, y, x, y);
 
-    function heartShape(t) {
-      const x = 16 * Math.pow(Math.sin(t), 3);
-      const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
-      return new THREE.Vector3(x/8, y/8, 0);
+    const geometry = new THREE.ExtrudeGeometry(heartShape, {depth: 1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.5});
+    const material = new THREE.MeshPhongMaterial({color: 0xff0000, shininess: 150});
+    const heart = new THREE.Mesh(geometry, material);
+    scene.add(heart);
+
+    // Đèn
+    const light = new THREE.PointLight(0xffffff, 1.5);
+    light.position.set(5,5,5);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x404040));
+
+    camera.position.z = 12;
+
+    // Hiệu ứng nổ hạt
+    const particles = [];
+    const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+    const particleMaterial = new THREE.MeshBasicMaterial({color: 0xff4d4d});
+
+    for (let i=0; i<500; i++) {
+      const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+      particle.position.set(
+        (Math.random()-0.5)*6,
+        (Math.random()-0.5)*6,
+        (Math.random()-0.5)*6
+      );
+      particle.visible = false;
+      scene.add(particle);
+      particles.push(particle);
     }
 
-    for (let i = 0; i < particleCount; i++) {
-      const t = Math.random() * Math.PI * 2;
-      const pos = heartShape(t);
-      const particle = new THREE.Mesh(geometry, material);
-      particle.position.copy(pos).multiplyScalar(Math.random() * 0.8 + 0.6);
-      particles.add(particle);
-    }
-    scene.add(particles);
-
-    camera.position.z = 15;
-
-    let exploded = false;
     let clock = new THREE.Clock();
+    const cycleDuration = 5; // 5 giây
 
     function animate() {
       requestAnimationFrame(animate);
-      const elapsed = clock.getElapsedTime();
 
-      if (!exploded) {
-        // Nhấp nháy trước khi nổ
-        const scale = 1 + 0.1 * Math.sin(elapsed * 6);
-        particles.scale.set(scale, scale, scale);
+      let elapsed = clock.getElapsedTime();
+      let t = (elapsed % cycleDuration) / cycleDuration;
 
-        if (elapsed > 4) { // Sau 4 giây thì nổ
-          exploded = true;
-          particles.children.forEach(p => {
-            p.userData = {
-              vel: new THREE.Vector3(
-                (Math.random() - 0.5) * 2,
-                (Math.random() - 0.5) * 2,
-                (Math.random() - 0.5) * 2
-              )
-            };
-          });
-        }
-      } else {
-        // Các hạt bay ra sau khi nổ
-        particles.children.forEach(p => {
-          p.position.add(p.userData.vel.clone().multiplyScalar(0.05));
+      if (t < 0.3) {
+        // Hiển thị trái tim
+        heart.visible = true;
+        particles.forEach(p => p.visible = false);
+        let scale = 1 + 0.2 * Math.sin(t * Math.PI * 3);
+        heart.scale.set(scale, scale, scale);
+      } else if (t < 0.6) {
+        // Nổ hạt
+        heart.visible = false;
+        particles.forEach(p => {
+          p.visible = true;
+          p.position.multiplyScalar(1.05);
         });
+      } else {
+        // Gom lại thành tim
+        heart.visible = true;
+        particles.forEach(p => p.visible = false);
+        heart.scale.set(1,1,1);
       }
 
+      heart.rotation.y += 0.01;
       renderer.render(scene, camera);
     }
     animate();
